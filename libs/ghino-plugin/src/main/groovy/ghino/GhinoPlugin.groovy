@@ -11,7 +11,7 @@ class GhinoPlugin implements Plugin<Project> {
     project.apply plugin: "java"
     
     project.jar {
-      manifest { attributes "Main-Class": "ghino.GhinoRunner" }
+      manifest { attributes "Main-Class": "ghino.Runner" }
     }
 
     project.configurations {
@@ -20,23 +20,18 @@ class GhinoPlugin implements Plugin<Project> {
 
     project.dependencies {
       onejar "com.simontuffs:one-jar-ant-task:0.97"
-      compile "org.akhikhl:ghino-runner:0.0.1"
+      compile "org.akhikhl.ghino:ghino-runner:0.0.1"
     }
 
-    if(!project.tasks.findByName("copyDependencies")) {
-      project.task([ type: Copy ], "copyDependencies") {
-        from project.configurations.runtime
-        into "${project.buildDir}/dependencies"
-      }
+    project.task([ type: Copy ], "copyDependencies") {
+      from project.configurations.runtime
+      into "${project.buildDir}/dependencies"
     }
+    project.tasks.build.dependsOn "copyDependencies"
 
-    project.task("buildOneJar") {
-      dependsOn "copyDependencies"
-      dependsOn "assemble"
-      dependsOn "test"
-      def outputDir = "${project.buildDir}/output"
-      outputs.file "${outputDir}/${project.name}-${project.version}.jar"
-      doLast {
+    project.tasks.build << {
+      if(project.tasks.build.dependsOnTaskDidWork() || project.tasks.assemble.dependsOnTaskDidWork()) {
+        def outputDir = "${project.buildDir}/output"
         ant.taskdef(name: 'onejar', classname: "com.simontuffs.onejar.ant.OneJarTask", classpath: project.configurations.onejar.asPath)
         def destFile = "${outputDir}/${project.name}-${project.version}.jar"
         new File("${project.buildDir}/dependencies").mkdirs();
@@ -57,7 +52,5 @@ class GhinoPlugin implements Plugin<Project> {
         project.logger.info "Created one-jar: " + destFile
       }
     }
-    
-    project.tasks.build.dependsOn project.tasks.buildOneJar
   }
 }

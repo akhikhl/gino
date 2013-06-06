@@ -84,7 +84,9 @@ task installContribs {
   }
 }
 
-task install
+if(!tasks.findByName("install"))
+  task install
+  
 install.dependsOn installContribs
 
 // it is possible to define other tasks here, for example, for deploying
@@ -99,7 +101,9 @@ task cleanContribs {
   }
 }
 
-task clean
+if(!tasks.findByName("clean"))
+  task clean
+
 clean.dependsOn cleanContribs
 
 defaultTasks "install"

@@ -1,7 +1,7 @@
 (function(global) {
 
-  global.window = {};
-
+  global.System = java.lang.System;
+  
   global.extend = function(obj) {
     let args = Array.prototype.slice.apply(arguments); 
     if(!obj && args.length > 1)
@@ -16,3 +16,4 @@
     return obj;
   };
 })(this);
+
