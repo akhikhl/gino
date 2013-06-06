@@ -1,0 +1,15 @@
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+apply plugin: "maven"
+apply plugin: "groovy"
+
+group = "org.akhikhl"
+version = '0.0.1'
+
+dependencies {
+  compile "org.codehaus.groovy:groovy-all:1.8.6"
+  compile gradleApi()
+}
