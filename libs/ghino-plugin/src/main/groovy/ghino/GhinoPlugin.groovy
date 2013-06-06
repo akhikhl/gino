@@ -11,7 +11,7 @@ class GhinoPlugin implements Plugin<Project> {
     project.apply plugin: "java"
     
     project.jar {
-      manifest { attributes "Main-Class": "ghino.Runner" }
+      manifest { attributes "Main-Class": "ghino.Main" }
     }
 
     project.configurations {

@@ -1,5 +1,9 @@
+apply plugin: "maven"
+apply plugin: "java"
+
 dependencies {
   compile "org.mozilla:rhino:1.7R4"
   compile "commons-io:commons-io:2.4"
   compile "ch.qos.logback:logback-classic:1.0.6"
 }
+

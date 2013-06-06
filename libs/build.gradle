@@ -4,17 +4,8 @@ allprojects {
 }
 
 subprojects {
-
   repositories {
     mavenLocal()
     mavenCentral()
   }
-
-  apply plugin: "maven"
-  apply plugin: "groovy"
-  
-  dependencies {
-    compile "org.codehaus.groovy:groovy-all:1.8.6"
-  }
 }
-
