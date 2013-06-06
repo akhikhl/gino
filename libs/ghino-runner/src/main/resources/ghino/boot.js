@@ -23,6 +23,6 @@ load("ghino/commons.js");
       jsArgs.push(arg);
     }
 
-    func(jsArgs);
+    return func(jsArgs);
   }
 })(this);
