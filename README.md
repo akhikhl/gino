@@ -1,6 +1,6 @@
 ghino
 =====
 
-gradle plugin for mozilla-rhino-based javascript development
+groovy-based runner for javascript programs
 
 Coming soon!
