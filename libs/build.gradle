@@ -1,0 +1,11 @@
+allprojects {
+  group = "org.akhikhl.ghino"
+  version = "0.0.1"
+}
+
+subprojects {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+}

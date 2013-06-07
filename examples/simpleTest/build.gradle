@@ -1,0 +1,24 @@
+buildscript {
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  apply plugin: "maven"
+  
+  dependencies {
+    classpath "org.akhikhl.ghino:ghino-plugin:0.0.1"
+  }
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+apply plugin: "maven"
+apply plugin: "ghino"
+
+version = '0.0.1'
+
