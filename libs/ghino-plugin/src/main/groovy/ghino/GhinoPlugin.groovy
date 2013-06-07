@@ -7,34 +7,37 @@ import org.gradle.api.tasks.*
 class GhinoPlugin implements Plugin<Project> {
 
   void apply(final Project project) {
-    
+
     project.apply plugin: "java"
-    
+
     project.jar {
       manifest { attributes "Main-Class": "ghino.Main" }
     }
 
-    project.configurations {
-      onejar
-    }
+    project.configurations { onejar }
 
     project.dependencies {
       onejar "com.simontuffs:one-jar-ant-task:0.97"
       compile "org.akhikhl.ghino:ghino-runner:0.0.1"
     }
 
-    project.task([ type: Copy ], "copyDependencies") {
+    project.task("copyDependencies", type: Copy) {
       from project.configurations.runtime
       into "${project.buildDir}/dependencies"
     }
-    project.tasks.build.dependsOn "copyDependencies"
+    project.tasks.copyDependencies.dependsOn "assemble", "check"
 
-    project.tasks.build << {
-      if(project.tasks.build.dependsOnTaskDidWork() || project.tasks.assemble.dependsOnTaskDidWork()) {
-        def outputDir = "${project.buildDir}/output"
+    // if(project.tasks.build.dependsOnTaskDidWork() || project.tasks.assemble.dependsOnTaskDidWork())
+
+    project.task("buildOneJar") {
+      inputs.dir "${project.buildDir}/libs"
+      inputs.dir "${project.buildDir}/dependencies"
+      def outputDir = "${project.buildDir}/output"
+      outputs.dir outputDir
+      doLast {
         ant.taskdef(name: 'onejar', classname: "com.simontuffs.onejar.ant.OneJarTask", classpath: project.configurations.onejar.asPath)
         def destFile = "${outputDir}/${project.name}-${project.version}.jar"
-        new File("${project.buildDir}/dependencies").mkdirs();
+        new File("${project.buildDir}/dependencies").mkdirs()
         ant.onejar(destFile: destFile) {
           main(jar: project.tasks.jar.archivePath.toString())
           manifest {
@@ -52,5 +55,8 @@ class GhinoPlugin implements Plugin<Project> {
         project.logger.info "Created one-jar: " + destFile
       }
     }
+    project.tasks.buildOneJar.dependsOn "copyDependencies"
+
+    project.tasks.build.dependsOn "buildOneJar"
   }
 }
