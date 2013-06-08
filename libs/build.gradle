@@ -1,5 +1,5 @@
 allprojects {
-  group = "org.akhikhl.ghino"
+  group = "org.akhikhl.gino"
   version = "0.0.1"
 }
 
@@ -8,4 +8,9 @@ subprojects {
     mavenLocal()
     mavenCentral()
   }
+  
+  apply plugin: "maven"
 }
+
+defaultTasks "install"
+
