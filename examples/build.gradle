@@ -12,13 +12,16 @@ buildscript {
   }
 }
 
-repositories {
-  mavenLocal()
-  mavenCentral()
+allprojects {
+  group = "org.akhikhl.gino.examples"
+  version = "0.0.1"
 }
 
-apply plugin: "maven"
-apply plugin: "gino"
+subprojects {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
 
-version = '0.0.1'
-
+  apply plugin: "maven"
+}
