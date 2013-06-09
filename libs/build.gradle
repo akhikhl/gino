@@ -4,12 +4,11 @@ allprojects {
 }
 
 subprojects {
+  apply plugin: "maven"
   repositories {
     mavenLocal()
     mavenCentral()
   }
-  
-  apply plugin: "maven"
 }
 
 defaultTasks "install"
