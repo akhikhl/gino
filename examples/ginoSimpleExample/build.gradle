@@ -1,8 +1,9 @@
 apply plugin: "java"
 apply plugin: "ginoapp"
 
+// see explanation in README.md
 jar {
   manifest {
-    attributes "Main-Javascript": "ginosimpleexample/main.js"
+    from 'src/main/resources/META-INF/MANIFEST.MF'
   }
 }

@@ -3,7 +3,6 @@ package gino;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import org.slf4j.Logger;
@@ -17,15 +16,16 @@ public class Main {
     ClassLoader classLoader = Main.class.getClassLoader();
     Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
     while (resources.hasMoreElements()) {
-      InputStream stm = resources.nextElement().openStream();
-      //System.out.println("DBG manifest: " + org.apache.commons.io.IOUtils.toString(stm, "UTF-8"));
+      URL url = resources.nextElement();
+      String manifestStr = org.apache.commons.io.IOUtils.toString(url, "UTF-8");
+      if (manifestStr.contains("Gino-Javascript"))
+        System.out.println("DBG manifest: " + manifestStr);
+      InputStream stm = url.openStream();
       Manifest manifest = new Manifest(stm);
-      for (String manKey : manifest.getEntries().keySet()) {
-        System.out.println("DBG entry: " + manKey);
-        Attributes attrs = manifest.getAttributes(manKey);
-        if (attrs != null)
-          for (Object key : attrs.keySet())
-            System.out.println("  key=" + key.toString() + ", value=" + attrs.getValue(key.toString()));
+      for (Object key : manifest.getMainAttributes().keySet()) {
+        String attrName = key.toString();
+        if ("Gino-Javascript".equals(attrName))
+          System.out.println("  key=" + attrName + ", value=" + manifest.getMainAttributes().getValue(attrName));
       }
     }
     Runner.run("main.js", args, Main.class.getClassLoader(), logger);
