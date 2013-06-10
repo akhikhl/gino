@@ -1,5 +1,8 @@
 apply plugin: "java"
 apply plugin: "ginoapp"
 
-version = '0.0.1'
-
+jar {
+  manifest {
+    attributes "Main-Javascript": "ginosimpleexample/main.js"
+  }
+}
