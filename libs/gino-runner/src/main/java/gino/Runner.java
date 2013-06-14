@@ -16,6 +16,9 @@ public class Runner {
       cx.setApplicationClassLoader(classLoader);
       ScriptableObject scope = new ImporterTopLevel(cx);
       scope.put("logger", scope, Context.javaToJS(logger, scope));
+      scope.put("out", scope, Context.javaToJS(System.out, scope));
+      scope.put("err", scope, Context.javaToJS(System.err, scope));
+      scope.put("ins", scope, Context.javaToJS(System.in, scope));
       Functions.defineFunctions(scope);
       Object bootFunc = Functions.loadScript(cx, scope, "gino/boot.js");
       if (!(bootFunc instanceof Function))
