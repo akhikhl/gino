@@ -1,32 +1,48 @@
 load("gino/commons.js");
 load("gino/services.js");
+load("gino/jX.js");
+load("gino/jXtoJS.js");
 
 (function(global) {
 
   return function(scriptName, args) { // boot function
   
-    // load possibly registers services, which we initialize and integrate below
-    let func = load(scriptName);
+    let obj = load(scriptName);
+    
+    let mainFunc, beforeMain, afterMain;    
+    if(typeof obj == "object") {
+      if(typeof obj.main == "function")
+        mainFunc = obj.main;
+      if(typeof obj.beforeMain == "function")
+        beforeMain = obj.beforeMain;
+      if(typeof obj.afterMain == "function")
+        afterMain = obj.afterMain;
+    } else if(typeof obj == "function")
+      mainFunc = obj;
+    else if(typeof global.main == "function")
+      mainFunc = global.main;
   
-    if(typeof func != "function") {
-      if(typeof global.main == "undefined")
-        throw new Error("global main function is undefined");
-        
-      if(typeof global.main != "function")
-        throw new Error("global main object is expected to be a function");
-        
-      func = global.main;
-    }
+    if(!mainFunc)
+      throw new Error("main function is undefined");
     
     let result = null;
-    let domains = [];
-    services.initServices(domains);
+    
+    if(beforeMain)
+      beforeMain(args);
     try {
-      services.integrateServices(domains);
-      result = func(args);
+      let domains = [];
+      services.initServices(domains);
+      try {
+        services.integrateServices(domains);
+        result = mainFunc(args);
+      } finally {
+        services.disposeServices(domains);
+      }
     } finally {
-      services.disposeServices(domains);
+      if(afterMain)
+        afterMain(args);
     }
+    
     return result;
   }
 })(this);

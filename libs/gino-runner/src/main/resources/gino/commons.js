@@ -18,5 +18,33 @@
     }
     return obj;
   };
+  
+  global.isJavaArray = function(obj) {
+    return obj && obj.getClass && obj.getClass().isArray();
+  };
+  
+  global.isJavaPrimitiveOrWrapper = function(obj) {
+    return obj && obj.getClass && org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper(obj.getClass());
+  };
+
+  global.isScriptableObject = function(obj) {
+    return isKindOf(obj, org.mozilla.javascript.ScriptableObject);
+  };
+
+  /**
+   * Converts javascript array to java array.
+   */
+  global.toJavaArray = function(arr, elemClass) {
+    if(!elemClass)
+      elemClass = java.lang.Object;
+    if(arr != null) { 
+      var result = java.lang.reflect.Array.newInstance(elemClass, arr.length);
+      var i = 0;
+      for(var i in arr)
+        java.lang.reflect.Array.set(result, i, arr[i]);
+      return result;
+    }
+    return java.lang.reflect.Array.newInstance(elemClass, 0);
+  };
 })(this);
 

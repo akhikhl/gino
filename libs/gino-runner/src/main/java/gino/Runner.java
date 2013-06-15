@@ -29,8 +29,7 @@ public class Runner {
       Object bootFunc = Functions.loadScript(cx, scope, "gino/boot.js", true);
       if (!(bootFunc instanceof Function))
         throw new Exception("result of boot script is expected to be a function");
-      Object jsArgs = ConverterToJS.convert(scope, args);
-      Object[] bootArgs = new Object[] { Context.javaToJS(scriptFileName, scope), jsArgs };
+      Object[] bootArgs = new Object[] { Context.javaToJS(scriptFileName, scope), args };
       result = ((Function) bootFunc).call(cx, scope, null, bootArgs);
     } finally {
       exitContext();
