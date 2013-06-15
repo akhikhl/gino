@@ -1,6 +1,9 @@
 (function(global) {
 
   global.System = java.lang.System;
+  global.out = java.lang.System.out;
+  global.err = java.lang.System.err;
+  global.ins = java.lang.System["in"];
   
   global.extend = function(obj) {
     let args = Array.prototype.slice.apply(arguments); 

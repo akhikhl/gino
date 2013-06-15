@@ -41,7 +41,9 @@ public class Functions {
         "getResourceAsLines",
         "getResourceListing",
         "isKindOf",
-        "load"
+        "jscontext",
+        "load",
+        "tryLoad"
     }, Functions.class, 0);
   }
 
@@ -213,6 +215,10 @@ public class Functions {
     return classObj instanceof Class<?> && ((Class<?>) classObj).isInstance(obj);
   }
 
+  public static Object jscontext(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
+    return cx;
+  }
+
   public static Object load(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
     if (args == null || args.length == 0) {
       logInvalidArgs("load");
@@ -222,7 +228,7 @@ public class Functions {
     try {
       for (Object arg : args) {
         Scriptable thisScope = thisObj == null ? funObj : thisObj;
-        result = loadScript(cx, thisScope, arg);
+        result = loadScript(cx, thisScope, arg, true);
       }
     } catch (Throwable x) {
       Context.throwAsScriptRuntimeEx(x);
@@ -230,7 +236,24 @@ public class Functions {
     return result;
   }
 
-  public static Object loadScript(Context cx, Scriptable scope, Object scriptFile) throws Exception {
+  public static Object tryLoad(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
+    if (args == null || args.length == 0) {
+      logInvalidArgs("tryLoad");
+      return Context.getUndefinedValue();
+    }
+    Object result = Context.getUndefinedValue();
+    try {
+      for (Object arg : args) {
+        Scriptable thisScope = thisObj == null ? funObj : thisObj;
+        result = loadScript(cx, thisScope, arg, false);
+      }
+    } catch (Throwable x) {
+      Context.throwAsScriptRuntimeEx(x);
+    }
+    return result;
+  }
+
+  public static Object loadScript(Context cx, Scriptable scope, Object scriptFile, boolean throwExceptionWhenNotFound) throws Exception {
     String scriptName;
     String script;
     File file = scriptFile instanceof java.io.File ? (File) scriptFile : new File(Context.toString(scriptFile));
@@ -246,8 +269,11 @@ public class Functions {
     else {
       scriptName = scriptFile instanceof java.io.File ? ((File) scriptFile).getPath() : Context.toString(scriptFile);
       InputStream ins = cx.getApplicationClassLoader().getResourceAsStream(scriptName);
-      if (ins == null)
-        throw new Exception(MessageFormat.format("Script ''{0}'' not found", scriptName));
+      if (ins == null) {
+        if (throwExceptionWhenNotFound)
+          throw new Exception(MessageFormat.format("Script ''{0}'' not found", scriptName));
+        return null;
+      }
       try {
         script = IOUtils.toString(ins, "UTF-8");
       } finally {

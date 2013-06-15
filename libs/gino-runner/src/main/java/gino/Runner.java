@@ -8,28 +8,32 @@ import org.mozilla.javascript.ScriptableObject;
 
 public class Runner {
 
+  public static Context enterContext(ClassLoader classLoader) {
+    Context cx = ContextFactory.getGlobal().enterContext();
+    cx.setLanguageVersion(Context.VERSION_1_8);
+    cx.setApplicationClassLoader(classLoader);
+    return cx;
+  }
+
+  public static void exitContext() {
+    Context.exit();
+  }
+
   public static Object run(String scriptFileName, Object[] args, ClassLoader classLoader, Object logger) throws Exception {
     Object result;
-    Context cx = ContextFactory.getGlobal().enterContext();
+    Context cx = enterContext(classLoader);
     try {
-      cx.setLanguageVersion(Context.VERSION_1_8);
-      cx.setApplicationClassLoader(classLoader);
       ScriptableObject scope = new ImporterTopLevel(cx);
       scope.put("logger", scope, Context.javaToJS(logger, scope));
-      scope.put("out", scope, Context.javaToJS(System.out, scope));
-      scope.put("err", scope, Context.javaToJS(System.err, scope));
-      scope.put("ins", scope, Context.javaToJS(System.in, scope));
       Functions.defineFunctions(scope);
-      Object bootFunc = Functions.loadScript(cx, scope, "gino/boot.js");
+      Object bootFunc = Functions.loadScript(cx, scope, "gino/boot.js", true);
       if (!(bootFunc instanceof Function))
         throw new Exception("result of boot script is expected to be a function");
-      Object[] jsArgs = new Object[args.length];
-      for (int i = 0; i < args.length; i++)
-        jsArgs[i] = Context.javaToJS(args[i], scope);
-      jsArgs = new Object[] { Context.javaToJS(scriptFileName, scope), Context.javaToJS(jsArgs, scope) };
-      result = ((Function) bootFunc).call(cx, scope, null, jsArgs);
+      Object jsArgs = ConverterToJS.convert(scope, args);
+      Object[] bootArgs = new Object[] { Context.javaToJS(scriptFileName, scope), jsArgs };
+      result = ((Function) bootFunc).call(cx, scope, null, bootArgs);
     } finally {
-      Context.exit();
+      exitContext();
     }
     return result;
   }
