@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -253,7 +254,7 @@ public class Functions {
     return result;
   }
 
-  public static Object loadScript(Context cx, Scriptable scope, Object scriptFile, boolean throwExceptionWhenNotFound) throws Exception {
+  public static Object loadScript(Context cx, Scriptable scope, Object scriptFile, boolean throwExceptionWhenNotFound) throws IOException {
     String scriptName;
     String script;
     File file = scriptFile instanceof java.io.File ? (File) scriptFile : new File(Context.toString(scriptFile));
@@ -271,7 +272,7 @@ public class Functions {
       InputStream ins = cx.getApplicationClassLoader().getResourceAsStream(scriptName);
       if (ins == null) {
         if (throwExceptionWhenNotFound)
-          throw new Exception(MessageFormat.format("Script ''{0}'' not found", scriptName));
+          throw new FileNotFoundException(MessageFormat.format("Script ''{0}'' not found", scriptName));
         return null;
       }
       try {

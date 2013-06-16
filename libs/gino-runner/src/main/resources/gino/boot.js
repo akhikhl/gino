@@ -1,7 +1,4 @@
-load("gino/commons.js");
 load("gino/services.js");
-load("gino/jX.js");
-load("gino/jXtoJS.js");
 
 (function(global) {
 
