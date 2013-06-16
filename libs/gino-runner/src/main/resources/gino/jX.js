@@ -53,6 +53,11 @@
     delegate("gotOther", defaultFunc);
     delegate("gotString", defaultFunc);
     delegate("gotUndefined", defaultFunc);
+    this.handler.acceptKey = function(key) {
+      if(handler.excludeKeys && handler.excludeKeys.indexOf(key) >= 0)
+        return false;
+      return true;
+    };
   }
   
   Walker.prototype.walk = function(obj) {
@@ -118,7 +123,7 @@
       for each(let entry in Iterator(obj.entrySet().iterator())) {
         let key = entry.getKey();
         let val = entry.getValue();
-        if(typeof val != "undefined") {
+        if(typeof val != "undefined" && this.handler.acceptKey(key)) {
           this.handler.beforeMapElement(obj, key, i);
           this.handler.gotMapElement(obj, key, i, this.walk(val));
           ++i;
@@ -130,7 +135,7 @@
       this.handler.beforeObject(obj);
       let i = 0;
       for(let [key, val] in obj)
-        if(typeof val != "undefined") {
+        if(typeof val != "undefined" && this.handler.acceptKey(key)) {
           this.handler.beforeMapElement(obj, key, i);
           this.handler.gotMapElement(obj, key, i, this.walk(val));
           ++i;

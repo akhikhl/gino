@@ -1,8 +1,8 @@
 (function(global) {
   
-  jX.fn.toJSON = function() {
+  jX.fn.toJSON = function(options) {
     
-    let handler = new function() {
+    let handler = extend({}, options, new function() {
       
       let buffer = new java.lang.StringBuilder();
       
@@ -108,7 +108,7 @@
       this.result = function() {
         return String(buffer.toString());
       };
-    };
+    });
     
     return this.walk(handler);
   };
