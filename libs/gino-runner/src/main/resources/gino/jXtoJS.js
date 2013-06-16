@@ -1,8 +1,8 @@
 (function(global) {
   
-  global.jX.fn.toJS = function() {
+  global.jX.fn.toJS = function(options) {
     
-    let handler = new function() {
+    let handler = extend({}, options, new function() {
       
       let containerStack = [];
       
@@ -45,7 +45,7 @@
       this.gotObject = this.gotJavaMap = function(obj, len) {
         return containerStack.pop();
       };
-    };
+    });
     
     return this.walk(handler);
   }
