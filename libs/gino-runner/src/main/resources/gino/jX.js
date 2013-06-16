@@ -13,6 +13,126 @@
     return this;
   };
   
+  jX.prototype.walk = function(handler) {
+    new Walker(handler).walk(this.obj);
+    if(typeof handler.result == "function")
+      this.obj = handler.result();
+    return this;
+  };
+  
+  function Walker(handler) {
+    let thisHandler = this.handler = {};
+    function delegate(funcName, defaultFunc) {
+      if(typeof handler[funcName] == "function")
+        thisHandler[funcName] = function() {
+          return handler[funcName].apply(handler, arguments); 
+        }; 
+      else
+        thisHandler[funcName] = defaultFunc; 
+    }
+    let defaultFunc = function() {}
+    delegate("enterArray", defaultFunc);
+    delegate("enterJavaArray", defaultFunc);
+    delegate("enterJavaCollection", defaultFunc);
+    delegate("enterJavaMap", defaultFunc);
+    delegate("enterObject", defaultFunc);
+    delegate("exitArray", defaultFunc);
+    delegate("exitJavaArray", defaultFunc);
+    delegate("exitJavaCollection", defaultFunc);
+    delegate("exitJavaMap", defaultFunc);
+    delegate("exitObject", defaultFunc);
+    delegate("gotArrayElement", defaultFunc);
+    delegate("gotBoolean", defaultFunc);
+    delegate("gotFunction", defaultFunc);
+    delegate("gotMapElement", defaultFunc);
+    delegate("gotNull", defaultFunc);
+    delegate("gotNumber", defaultFunc);
+    delegate("gotOther", defaultFunc);
+    delegate("gotString", defaultFunc);
+    delegate("gotJavaBoolean", defaultFunc);
+    delegate("gotJavaChar", defaultFunc);
+    delegate("gotJavaString", defaultFunc);
+    delegate("gotJavaNumber", defaultFunc);
+    delegate("gotUndefined", defaultFunc);
+  }
+  
+  Walker.prototype.walk = function(obj) {
+    if(obj === null)
+      this.handler.gotNull();
+    else if(Array.isArray(obj)) {
+      this.handler.enterArray.apply(this.handler, arguments);
+      for(let key in obj) {
+        let val = obj[key];
+        if(typeof val != "undefined") {
+          this.handler.gotArrayElement(obj, key, val);
+          this.walk(val, key);
+        }
+      }
+      this.handler.exitArray.apply(this.handler, arguments);
+    }
+    else if(typeof obj == "boolean")
+      this.handler.gotBoolean.apply(this.handler, arguments);
+    else if(typeof obj == "function")
+      this.handler.gotFunction.apply(this.handler, arguments);
+    else if(typeof obj == "number")
+      this.handler.gotNumber.apply(this.handler, arguments);
+    else if(typeof obj == "string")
+      this.handler.gotString.apply(this.handler, arguments);
+    else if(isKindOf(obj, java.lang.String))
+      this.handler.gotJavaString.apply(this.handler, arguments);
+    else if(isKindOf(obj, java.lang.Number))
+      this.handler.gotJavaNumber.apply(this.handler, arguments);
+    else if(isKindOf(obj, java.lang.Boolean))
+      this.handler.gotJavaBoolean.apply(this.handler, arguments);
+    else if(isKindOf(obj, java.lang.Character))
+      this.handler.gotJavaChar.apply(this.handler, arguments);
+    else if(isJavaArray(obj)) {
+      this.handler.enterJavaArray.apply(this.handler, arguments);
+      let len = java.lang.reflect.Array.getLength.apply(this.handler, arguments);
+      for(let i = 0; i < len; i++) {
+        let val = java.lang.reflect.Array.get(obj, i);
+        if(typeof val != "undefined") {
+          this.handler.gotArrayElement(obj, i, val);
+          this.walk(val, i);
+        }
+      }
+      this.handler.exitJavaArray.apply(this.handler, arguments);
+    }
+    else if(isKindOf(obj, java.util.Collection) && obj.getClass) {
+      this.handler.enterJavaCollection.apply(this.handler, arguments);
+      let i = 0;
+      for each(let elem in Iterator(obj.iterator()))
+        if(typeof elem != "undefined") {
+          this.handler.gotArrayElement(obj, i, elem);
+          this.walk(elem, i);        
+          ++i;
+        }
+      this.handler.exitJavaCollection.apply(this.handler, arguments);
+    }
+    else if(isKindOf(obj, java.util.Map) && obj.getClass) {
+      this.handler.enterJavaMap.apply(this.handler, arguments);
+      for each(let entry in Iterator(obj.entrySet().iterator()))
+        if(typeof entry.getValue() != "undefined") {
+          this.handler.gotMapElement(obj, entry.getKey(), entry.getValue());
+          this.walk(entry.getValue(), entry.getKey());
+        }
+      this.handler.exitJavaMap.apply(this.handler, arguments);
+    }
+    else if(typeof obj == "object") {
+      this.handler.enterObject.apply(this.handler, arguments);
+      for(let [key, val] in obj)
+        if(typeof val != "undefined") {
+          this.handler.gotMapElement(obj, key, val);
+          this.walk(val, key);
+        }
+      this.handler.exitObject.apply(this.handler, arguments);
+    }
+    else if(typeof obj == "undefined")
+      this.handler.gotUndefined.apply(this.handler, arguments);
+    else
+      this.handler.gotOther.apply(this.handler, arguments);
+  };
+  
   function TransformRunner(transformer) {
     let thisTransformer = this.transformer = {};
     function delegate(funcName, defaultFunc) {
