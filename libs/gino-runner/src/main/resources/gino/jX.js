@@ -58,6 +58,7 @@
         return false;
       return true;
     };
+    this.nestLevel = 0;
   }
   
   Walker.prototype.walk = function(obj) {
@@ -104,6 +105,12 @@
       }
       return this.handler.gotJavaArray(obj, i);
     }
+    if(isKindOf(obj, java.lang.Number))
+      return this.handler.gotJavaNumber(obj);
+    if(isKindOf(obj, java.lang.Boolean))
+      return this.handler.gotJavaBoolean(obj);
+    if(isKindOf(obj, java.lang.Character))
+      return this.handler.gotJavaChar(obj);
     if(Array.isArray(obj)) {
       this.handler.beforeArray(obj);
       let i = 0;
@@ -125,12 +132,10 @@
       return this.handler.gotNumber(obj);
     if(typeof obj == "string")
       return this.handler.gotString(obj);
-    if(isKindOf(obj, java.lang.Number))
-      return this.handler.gotJavaNumber(obj);
-    if(isKindOf(obj, java.lang.Boolean))
-      return this.handler.gotJavaBoolean(obj);
-    if(isKindOf(obj, java.lang.Character))
-      return this.handler.gotJavaChar(obj);
+    if(typeof obj == "undefined")
+      return this.handler.gotUndefined(obj);
+    if(obj.getClass)
+      return this.handler.gotOther(obj);
     if(typeof obj == "object") {
       this.handler.beforeObject(obj);
       let i = 0;
@@ -142,8 +147,6 @@
         }
       return this.handler.gotObject(obj, i);
     }
-    if(typeof obj == "undefined")
-      return this.handler.gotUndefined(obj);
     return this.handler.gotOther(obj);
   };
 

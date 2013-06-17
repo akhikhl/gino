@@ -117,9 +117,4 @@
     return global.jX(obj).toJSON().get();
   };
   
-  if(!global.JSON)
-    global.JSON = {};
-
-  global.JSON.stringify = global.toJSON;
-  
 })(this);
