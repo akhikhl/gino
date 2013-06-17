@@ -62,6 +62,10 @@
         return b;
       };
       
+      this.gotFunction = function(f) {
+        writer.write(String(f));
+      };
+      
       this.gotJavaBoolean = function(b) {
         this.gotBoolean(b == java.lang.Boolean.TRUE);
         return b;
