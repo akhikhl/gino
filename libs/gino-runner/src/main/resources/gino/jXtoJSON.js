@@ -1,20 +1,18 @@
 (function(global) {
   
-  jX.fn.toJSON = function(options) {
+  jX.fn.toJSON = function(writer, options) {
     
-    let handler = extend({}, options, new function() {
-      
-      let buffer = new java.lang.StringBuilder();
+    let handler = extend(new function() {
       
       function appendQuoted(s) {
-        buffer.append("\"");
+        writer.write("\"");
         for(let i = 0; i < s.length; i++) {
           let c = s.charAt(i);
           if(c == "\"" || c == "\\")
-            buffer.append("\\");
-          buffer.append(c);
+            writer.write("\\");
+          writer.write(c);
         }
-        buffer.append("\"");
+        writer.write("\"");
       }
       
       function validIdent(s) {
@@ -27,93 +25,107 @@
       }
       
       this.beforeArray = this.beforeJavaArray = this.beforeJavaCollection = function() {
-        buffer.append("[");
+        writer.write("[");
       };
       
       this.beforeArrayElement = function(obj, i) {
         if(i != 0)
-          buffer.append(",");
-        buffer.append(" ");
+          writer.write(",");
+        writer.write(" ");
       };
       
       this.beforeMapElement = function(obj, key, i) {
         if(i != 0)
-          buffer.append(",");
-        buffer.append(" ");
+          writer.write(",");
+        writer.write(" ");
         key = String(key);
         if(validIdent(key))
-          buffer.append(key);
+          writer.write(key);
         else
           appendQuoted(key)
-        buffer.append(": ");
+        writer.write(": ");
       };
       
       this.beforeObject = this.beforeJavaMap = function() {
-        buffer.append("{");
+        writer.write("{");
       };
       
       this.gotArray = this.gotJavaArray = this.gotJavaCollection = function(obj, len) {
         if(len != 0)
-          buffer.append(" ");
-        buffer.append("]");
+          writer.write(" ");
+        writer.write("]");
+        return obj;
       };
       
       this.gotBoolean = function(b) {
-        buffer.append(b ? "true" : "false");
+        writer.write(b ? "true" : "false");
+        return b;
       };
       
       this.gotJavaBoolean = function(b) {
         this.gotBoolean(b == java.lang.Boolean.TRUE);
+        return b;
       };
       
       this.gotJavaChar = function(c) {
         this.gotString(String(java.lang.String.valueOf(c)));
+        return c;
       };
       
       this.gotJavaNumber = function(n) {
         this.gotNumber(Number(n));
+        return n;
       };
       
       this.gotJavaString = function(s) {
         this.gotString(String(s));
+        return s;
       };
       
       this.gotNull = function() {
-        buffer.append("null");
+        writer.write("null");
+        return null;
       };
       
       this.gotNumber = function(n) {
-        buffer.append(n % 1 == 0 ? n.toFixed() : n);
+        writer.write(String(n % 1 == 0 ? n.toFixed() : n));
+        return n;
       };
       
       this.gotObject = this.gotJavaMap = function(obj, len) {
         if(len != 0)
-          buffer.append(" ");
-        buffer.append("}");
+          writer.write(" ");
+        writer.write("}");
+        return obj;
       };
       
       this.gotOther = function(x) {
-        buffer.append(String(x));
+        this.gotString(String(x));
+        return x;
       };
       
       this.gotString = function(s) {
         appendQuoted(s);
+        return s;
       };
       
       this.gotUndefined = function() {
-        buffer.append("undefined");
+        writer.write("undefined");
       };
-      
-      this.result = function() {
-        return String(buffer.toString());
-      };
-    });
+    }, options);
     
     return this.walk(handler);
   };
   
-  global.toJSON = function(obj) {
-    return global.jX(obj).toJSON().get();
+  jX.fn.toJSONString = function(options) {
+    let writer = new java.io.StringWriter();
+    this.toJSON(writer, options);
+    this.obj = String(writer.toString());
+    return this;
+  };
+  
+  global.toJSON = function(obj, options) {
+    return global.jX(obj).toJSONString(options).get();
   };
   
 })(this);
