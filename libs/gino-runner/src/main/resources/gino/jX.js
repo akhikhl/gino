@@ -63,49 +63,8 @@
   Walker.prototype.walk = function(obj) {
     if(obj === null)
       return this.handler.gotNull();
-    if(Array.isArray(obj)) {
-      this.handler.beforeArray(obj);
-      let i = 0;
-      for(let key in obj) {
-        let val = obj[key];
-        if(typeof val != "undefined") {
-          this.handler.beforeArrayElement(obj, i);
-          this.handler.gotArrayElement(obj, i, this.walk(val));
-          ++i;
-        }
-      }
-      return this.handler.gotArray(obj, i);
-    }
-    if(typeof obj == "boolean")
-      return this.handler.gotBoolean(obj);
-    if(typeof obj == "function")
-      return this.handler.gotFunction(obj);
-    if(typeof obj == "number")
-      return this.handler.gotNumber(obj);
-    if(typeof obj == "string")
-      return this.handler.gotString(obj);
     if(isKindOf(obj, java.lang.String))
       return this.handler.gotJavaString(obj);
-    if(isKindOf(obj, java.lang.Number))
-      return this.handler.gotJavaNumber(obj);
-    if(isKindOf(obj, java.lang.Boolean))
-      return this.handler.gotJavaBoolean(obj);
-    if(isKindOf(obj, java.lang.Character))
-      return this.handler.gotJavaChar(obj);
-    if(isJavaArray(obj)) {
-      this.handler.beforeJavaArray(obj);
-      let len = java.lang.reflect.Array.getLength(obj);
-      let i = 0;
-      for(let key = 0; key < len; key++) {
-        let val = java.lang.reflect.Array.get(obj, key);
-        if(typeof val != "undefined") {
-          this.handler.beforeArrayElement(obj, i);
-          this.handler.gotArrayElement(obj, i, this.walk(val));
-          ++i;
-        }
-      }
-      return this.handler.gotJavaArray(obj, i);
-    }
     if(isKindOf(obj, java.util.Collection) && obj.getClass) {
       this.handler.beforeJavaCollection(obj);
       let i = 0;
@@ -131,6 +90,47 @@
       }
       return this.handler.gotJavaMap(obj, i);
     }
+    if(isJavaArray(obj)) {
+      this.handler.beforeJavaArray(obj);
+      let len = java.lang.reflect.Array.getLength(obj);
+      let i = 0;
+      for(let key = 0; key < len; key++) {
+        let val = java.lang.reflect.Array.get(obj, key);
+        if(typeof val != "undefined") {
+          this.handler.beforeArrayElement(obj, i);
+          this.handler.gotArrayElement(obj, i, this.walk(val));
+          ++i;
+        }
+      }
+      return this.handler.gotJavaArray(obj, i);
+    }
+    if(Array.isArray(obj)) {
+      this.handler.beforeArray(obj);
+      let i = 0;
+      for(let key in obj) {
+        let val = obj[key];
+        if(typeof val != "undefined") {
+          this.handler.beforeArrayElement(obj, i);
+          this.handler.gotArrayElement(obj, i, this.walk(val));
+          ++i;
+        }
+      }
+      return this.handler.gotArray(obj, i);
+    }
+    if(typeof obj == "boolean")
+      return this.handler.gotBoolean(obj);
+    if(typeof obj == "function")
+      return this.handler.gotFunction(obj);
+    if(typeof obj == "number")
+      return this.handler.gotNumber(obj);
+    if(typeof obj == "string")
+      return this.handler.gotString(obj);
+    if(isKindOf(obj, java.lang.Number))
+      return this.handler.gotJavaNumber(obj);
+    if(isKindOf(obj, java.lang.Boolean))
+      return this.handler.gotJavaBoolean(obj);
+    if(isKindOf(obj, java.lang.Character))
+      return this.handler.gotJavaChar(obj);
     if(typeof obj == "object") {
       this.handler.beforeObject(obj);
       let i = 0;

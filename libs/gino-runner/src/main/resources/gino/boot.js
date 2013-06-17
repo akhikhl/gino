@@ -3,6 +3,8 @@ load("gino/services.js");
 (function(global) {
 
   return function(scriptName, args) { // boot function
+    
+    args = toJavascript(args);
   
     let obj = load(scriptName);
     
