@@ -31,6 +31,10 @@
     return isKindOf(obj, org.mozilla.javascript.ScriptableObject);
   };
 
+  global.isJavaObject = function(obj) {
+    return !isKindOf(obj, org.mozilla.javascript.ScriptableObject) && !isKindOf(obj, org.mozilla.javascript.Undefined);
+  };
+
   /**
    * Converts javascript array to java array.
    */
