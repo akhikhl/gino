@@ -2,9 +2,11 @@ load("gino/services.js");
 
 (function(global) {
 
-  return function(scriptName, args) { // boot function
+  return function(scriptName, args, initServices) { // boot function
     
     args = toJavascript(args);
+    
+    logger.trace("boot '{}', args={}", toJavaArray([scriptName, toJSON(args)]));
   
     let obj = load(scriptName);
     
@@ -26,20 +28,23 @@ load("gino/services.js");
     
     let result = null;
     
+    let domains = [];
     if(beforeMain)
-      beforeMain(args);
+      beforeMain(args, domains);
     try {
-      let domains = [];
-      services.initServices(domains);
-      try {
-        services.integrateServices(domains);
-        result = mainFunc(args);
-      } finally {
-        services.disposeServices(domains);
-      }
+      if(initServices) {
+        services.initServices(domains);
+        try {
+          services.integrateServices(domains);
+          result = mainFunc(args, domains);
+        } finally {
+          services.disposeServices(domains);
+        }
+      } else
+        result = mainFunc(args, domains);
     } finally {
       if(afterMain)
-        afterMain(args);
+        afterMain(args, domains);
     }
     
     return result;
