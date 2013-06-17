@@ -63,7 +63,7 @@
       };
       
       this.gotJavaBoolean = function(b) {
-        buffer.append(b == java.lang.Boolean.TRUE ? "true" : "false");
+        this.gotBoolean(b == java.lang.Boolean.TRUE);
       };
       
       this.gotJavaChar = function(c) {
@@ -71,12 +71,11 @@
       };
       
       this.gotJavaNumber = function(n) {
-        n = Number(n);
-        buffer.append(n % 1 == 0 ? n.toFixed() : n);
+        this.gotNumber(Number(n));
       };
       
       this.gotJavaString = function(s) {
-        appendQuoted(String(s));
+        this.gotString(String(s));
       };
       
       this.gotNull = function() {
