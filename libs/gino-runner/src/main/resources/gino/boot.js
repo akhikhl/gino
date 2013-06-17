@@ -7,6 +7,11 @@ load("gino/services.js");
     args = toJavascript(args);
     
     logger.trace("boot '{}', args={}", toJavaArray([scriptName, toJSON(args)]));
+
+    Object.defineProperty(global, "homeFolder", {
+      value: new java.io.File(".").getAbsolutePath(),
+      writable: false
+    });
   
     let obj = load(scriptName);
     
