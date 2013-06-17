@@ -36,6 +36,7 @@ public class Functions {
 
   public static void defineFunctions(ScriptableObject scope) {
     scope.defineFunctionProperties(new String[] {
+        "eval",
         "getResource",
         "getResourceAsStream",
         "getResourceAsString",
@@ -44,8 +45,21 @@ public class Functions {
         "isKindOf",
         "jscontext",
         "load",
+        "sync",
         "tryLoad"
     }, Functions.class, 0);
+  }
+
+  public static Object eval(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
+    if (args == null || args.length == 0) {
+      logInvalidArgs("eval");
+      return Context.getUndefinedValue();
+    }
+    Scriptable thisScope = thisObj == null ? funObj : thisObj;
+    Object result = null;
+    for (Object arg : args)
+      result = cx.evaluateString(thisScope, Context.toString(arg), null, 0, null);
+    return result;
   }
 
   public static Object getResource(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
@@ -237,23 +251,6 @@ public class Functions {
     return result;
   }
 
-  public static Object tryLoad(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
-    if (args == null || args.length == 0) {
-      logInvalidArgs("tryLoad");
-      return Context.getUndefinedValue();
-    }
-    Object result = Context.getUndefinedValue();
-    try {
-      for (Object arg : args) {
-        Scriptable thisScope = thisObj == null ? funObj : thisObj;
-        result = loadScript(cx, thisScope, arg, false);
-      }
-    } catch (Throwable x) {
-      Context.throwAsScriptRuntimeEx(x);
-    }
-    return result;
-  }
-
   public static Object loadScript(Context cx, Scriptable scope, Object scriptFile, boolean throwExceptionWhenNotFound) throws IOException {
     String scriptName;
     String script;
@@ -286,5 +283,44 @@ public class Functions {
 
   private static void logInvalidArgs(String functionName) {
     logger.warn("Called '{}' with incorrect arguments", functionName);
+  }
+  
+  public static Object sync(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
+    if (args == null || !(args.length == 2 || args.length == 3) || args[0] == null || !(args[1] instanceof Function)) {
+      logInvalidArgs("sync");
+      return false;
+    }
+    Object[] delegatedArgs;
+    if (args.length == 2)
+      delegatedArgs = new Object[0];
+    else if (args[2] instanceof Object[])
+      delegatedArgs = (Object[]) args[2];
+    else if (args[2] instanceof NativeArray)
+      delegatedArgs = ((NativeArray) args[2]).toArray();
+    else
+      delegatedArgs = new Object[] { args[2] };
+    Scriptable thisScope = thisObj == null ? funObj : thisObj;
+    Object result;
+    synchronized (args[0]) {
+      result = ((Function) args[1]).call(cx, thisScope, thisObj, delegatedArgs);
+    }
+    return result;
+  }
+
+  public static Object tryLoad(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
+    if (args == null || args.length == 0) {
+      logInvalidArgs("tryLoad");
+      return Context.getUndefinedValue();
+    }
+    Object result = Context.getUndefinedValue();
+    try {
+      for (Object arg : args) {
+        Scriptable thisScope = thisObj == null ? funObj : thisObj;
+        result = loadScript(cx, thisScope, arg, false);
+      }
+    } catch (Throwable x) {
+      Context.throwAsScriptRuntimeEx(x);
+    }
+    return result;
   }
 }
