@@ -34,6 +34,26 @@
   global.isJavaObject = function(obj) {
     return !isKindOf(obj, org.mozilla.javascript.ScriptableObject) && !isKindOf(obj, org.mozilla.javascript.Undefined);
   };
+  
+  global.normalizeLines = function(str) {
+    if(!str)
+      return str;
+    let it = new org.apache.commons.io.LineIterator(new java.io.StringReader(str));
+    let w = new java.io.StringWriter();
+    let firstLine = true;
+    let lineSep = System.getProperty("line.separator");
+    while (it.hasNext()) {
+      let line = it.nextLine().trim();
+      if (!line.isEmpty()) {
+        if (firstLine)
+          firstLine = false;
+        else
+          w.write(lineSep);
+        w.write(line);
+      }
+    }
+    return String(w.toString());
+  };
 
   /**
    * Converts javascript array to java array.

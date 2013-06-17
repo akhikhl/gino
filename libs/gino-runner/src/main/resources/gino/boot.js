@@ -1,17 +1,23 @@
 load("gino/services.js");
+load("gino/modules.js");
 
 (function(global) {
 
-  return function(scriptName, args, initServices) { // boot function
+  return function(scriptName, args, initServices, homeFolder) { // boot function
+
+    Object.defineProperty(global, "global", {
+      value: global,
+      writable: false
+    });
+
+    Object.defineProperty(global, "homeFolder", {
+      value: homeFolder,
+      writable: false
+    });
     
     args = toJavascript(args);
     
     logger.trace("boot '{}', args={}", toJavaArray([scriptName, toJSON(args)]));
-
-    Object.defineProperty(global, "homeFolder", {
-      value: new java.io.File(".").getAbsolutePath(),
-      writable: false
-    });
   
     let obj = load(scriptName);
     

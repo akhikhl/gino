@@ -4,17 +4,6 @@
     
     let handler = extend(new function() {
       
-      function appendQuoted(s) {
-        writer.write("\"");
-        for(let i = 0; i < s.length; i++) {
-          let c = s.charAt(i);
-          if(c == "\"" || c == "\\")
-            writer.write("\\");
-          writer.write(c);
-        }
-        writer.write("\"");
-      }
-      
       function validIdent(s) {
         if(s.length == 0 || !java.lang.Character.isJavaIdentifierStart(s[0]))
           return false;
@@ -42,7 +31,7 @@
         if(validIdent(key))
           writer.write(key);
         else
-          appendQuoted(key)
+          jsonQuote(key, writer);
         writer.write(": ");
       };
       
@@ -109,7 +98,7 @@
       };
       
       this.gotString = function(s) {
-        appendQuoted(s);
+        jsonQuote(s, writer);
         return s;
       };
       

@@ -11,10 +11,15 @@ public class Main {
   private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
 
   public static void main(String[] args) throws Exception {
-    Enumeration<URL> resources = Main.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
+    run(args, Main.class.getClassLoader(), logger, new java.io.File(".").getAbsolutePath());
+  }
+
+  public static void run(String[] args, ClassLoader classLoader, Logger logger, String homeFolder) throws Exception {
+    Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
     String ginoJavascript = "main.js";
     while (resources.hasMoreElements()) {
-      Manifest manifest = new Manifest(resources.nextElement().openStream());
+      URL url = resources.nextElement();
+      Manifest manifest = new Manifest(url.openStream());
       for (Object key : manifest.getMainAttributes().keySet()) {
         String attrName = key.toString();
         if ("Gino-Javascript".equals(attrName)) {
@@ -23,6 +28,6 @@ public class Main {
         }
       }
     }
-    Runner.run(ginoJavascript, args, Main.class.getClassLoader(), logger);
+    Runner.run(ginoJavascript, args, classLoader, logger, true, homeFolder);
   }
 }
