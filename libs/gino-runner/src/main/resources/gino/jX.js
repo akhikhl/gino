@@ -58,13 +58,12 @@
         return false;
       return true;
     };
-    this.nestLevel = 0;
   }
   
   Walker.prototype.walk = function(obj) {
     if(obj === null)
       return this.handler.gotNull();
-    if(isKindOf(obj, java.lang.String))
+    if(isKindOf(obj, java.lang.String) && obj.getClass)
       return this.handler.gotJavaString(obj);
     if(isKindOf(obj, java.util.Collection) && obj.getClass) {
       this.handler.beforeJavaCollection(obj);
