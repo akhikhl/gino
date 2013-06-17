@@ -128,4 +128,28 @@
     return global.jX(obj).toJSONString(options).get();
   };
   
+  global.toJSON = function(obj, output, options) {
+    if(output == null)
+      return global.jX(obj).toJSONString(options).get();
+    if(isKindOf(output, java.io.Writer))
+      return global.jX(obj).toJSON(output, options);
+    if(isKindOf(output, java.io.OutputStream)) {
+      let writer = new java.io.OutputStreamWriter(output);
+      try {
+        return global.jX(obj).toJSON(writer, options);
+      } finally {
+        writer.close();
+      }
+    }
+    if(isKindOf(output, java.io.File)) {
+      let writer = new java.io.FileWriter(output);
+      try {
+        return global.jX(obj).toJSON(writer, options);
+      } finally {
+        writer.close();
+      }
+    }
+    throw new Error("toXML: output has unknown type");
+  }
+  
 })(this);
