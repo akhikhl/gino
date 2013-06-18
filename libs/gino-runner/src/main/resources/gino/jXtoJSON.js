@@ -4,15 +4,6 @@
     
     let handler = extend(new function() {
       
-      function validIdent(s) {
-        if(s.length == 0 || !java.lang.Character.isJavaIdentifierStart(s[0]))
-          return false;
-        for (let i = 1; i < s.length; i++)
-          if(!java.lang.Character.isJavaIdentifierPart(s[i]))
-            return false;
-        return true;
-      }
-      
       this.beforeArray = this.beforeJavaArray = this.beforeJavaCollection = function() {
         writer.write("[");
       };
@@ -27,11 +18,7 @@
         if(i != 0)
           writer.write(",");
         writer.write(" ");
-        key = String(key);
-        if(validIdent(key))
-          writer.write(key);
-        else
-          jsonQuote(key, writer);
+        jsonQuote(String(key), writer);
         writer.write(": ");
       };
       
