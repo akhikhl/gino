@@ -14,6 +14,11 @@ load("gino/modules.js");
       value: homeFolder,
       writable: false
     });
+
+    Object.defineProperty(global, "programArgs", {
+      value: args,
+      writable: false
+    });
     
     args = toJavascript(args);
     
