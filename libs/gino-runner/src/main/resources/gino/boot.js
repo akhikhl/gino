@@ -11,7 +11,7 @@ load("gino/modules.js");
     });
 
     Object.defineProperty(global, "homeFolder", {
-      value: homeFolder,
+      value: new java.io.File(homeFolder).getAbsoluteFile(),
       writable: false
     });
 
