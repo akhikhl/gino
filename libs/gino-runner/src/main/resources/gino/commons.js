@@ -55,6 +55,16 @@
     return String(w.toString());
   };
 
+  global.toBoolean = function(val, defaultValue) {
+    if(val == null)
+      return defaultValue == null ? false : defaultValue;
+    if(java.lang.Boolean.TRUE.equals(val) || val == "true")
+      return true;
+    if(java.lang.Boolean.FALSE.equals(val) || val == "false")
+      return false;
+    return Boolean(val);
+  };
+
   /**
    * Converts javascript array to java array.
    */
