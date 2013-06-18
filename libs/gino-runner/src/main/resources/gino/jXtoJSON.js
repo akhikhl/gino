@@ -117,10 +117,6 @@
     return this;
   };
   
-  global.toJSON = function(obj, options) {
-    return global.jX(obj).toJSONString(options).get();
-  };
-  
   global.toJSON = function(obj, output, options) {
     if(output == null)
       return global.jX(obj).toJSONString(options).get();
@@ -144,5 +140,14 @@
     }
     throw new Error("toXML: output has unknown type");
   }
+  
+  global.toJSONString = function(obj, options) {
+    return global.jX(obj).toJSONString(options).get();
+  };
+  
+  global.JSON = global.JSON || {};
+  global.JSON.stringify = function(obj) {
+    return global.toJSONString(obj);
+  };
   
 })(this);
