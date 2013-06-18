@@ -19,7 +19,8 @@ class GinoAppPlugin implements Plugin<Project> {
     project.dependencies { compile "org.akhikhl.gino:gino-runner:0.0.1" }
 
     project.task("run") { task ->
-      doLast {
+      task.dependsOn project.tasks.classes
+      task.doLast {
         def urls = [
           new File(project.buildDir, "classes/main").toURI().toURL(),
           new File(project.buildDir, "resources/main").toURI().toURL()
@@ -31,8 +32,6 @@ class GinoAppPlugin implements Plugin<Project> {
 
         gino.Main.run(project.run.args as String[], classLoader, logger, project.projectDir.absolutePath)
       }
-
-      task.dependsOn project.tasks.build
     }
   }
 }
