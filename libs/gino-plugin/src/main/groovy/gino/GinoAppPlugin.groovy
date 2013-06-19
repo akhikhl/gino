@@ -22,15 +22,16 @@ class GinoAppPlugin implements Plugin<Project> {
       task.dependsOn project.tasks.classes
       task.doLast {
         def urls = [
-          new File(project.buildDir, "classes/main").toURI().toURL(),
-          new File(project.buildDir, "resources/main").toURI().toURL()
+          new File("${project.buildDir}/classes/main").toURI().toURL(),
+          new File("${project.buildDir}/resources/main").toURI().toURL()
         ]
         urls += project.configurations["runtime"].collect { dep ->
           dep.toURI().toURL()
         }
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], GinoAppPlugin.class.classLoader)
-
-        gino.Main.run(project.run.args as String[], classLoader, logger, project.projectDir.absolutePath)
+        def runFolder = new File("${project.buildDir}/resources/runFolder")
+        runFolder.mkdirs()
+        gino.Main.run(project.run.args as String[], classLoader, logger, runFolder.absolutePath)
       }
     }
   }
