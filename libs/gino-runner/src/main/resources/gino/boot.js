@@ -45,6 +45,9 @@ load("gino/modules.js");
     let result = null;
     
     let domains = [];
+    if(global.app)
+      domains.push(global.app);
+      
     if(beforeMain)
       beforeMain(args, domains);
     try {
