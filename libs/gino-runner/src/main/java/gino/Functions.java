@@ -354,6 +354,7 @@ public class Functions {
     }
     else {
       scriptName = scriptFile instanceof java.io.File ? ((File) scriptFile).getPath() : Context.toString(scriptFile);
+      scriptName = scriptName.replace('\\', '/');
       InputStream ins = cx.getApplicationClassLoader().getResourceAsStream(scriptName);
       if (ins == null) {
         if (throwExceptionWhenNotFound)
