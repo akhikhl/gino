@@ -1,5 +1,5 @@
-apply plugin: "java"
-apply plugin: "ginoapp"
+apply plugin: 'java'
+apply plugin: 'ginoapp'
 
 // see explanation in README.md
 jar {
@@ -9,6 +9,6 @@ jar {
 }
 
 run {
-  arg "hello"
-  arg "world!"
+  arg 'hello'
+  arg 'world!'
 }

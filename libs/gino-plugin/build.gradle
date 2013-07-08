@@ -1,9 +1,9 @@
-apply plugin: "groovy"
+apply plugin: 'groovy'
 
 dependencies {
-  compile "org.codehaus.groovy:groovy-all:1.8.6"
+  compile 'org.codehaus.groovy:groovy-all:1.8.6'
   compile gradleApi()
-  compile "org.akhikhl.gradle-onejar:gradle-onejar:0.0.1"
-  compile project(":gino-runner")
+  compile 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.2'
+  compile project(':gino-runner')
 }
 
