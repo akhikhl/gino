@@ -1,6 +1,8 @@
 gino
 =====
 
-groovy-based runner for javascript programs
+gradle-based runner for javascript programs.
 
-Coming soon!
+Greatly simplifies starting javascript program in the context of java or groovy application.
+
+More information coming soon!
