@@ -16,7 +16,7 @@ class GinoAppPlugin implements Plugin<Project> {
       manifest { attributes 'Main-Class': 'gino.Main' }
     }
 
-    project.dependencies { compile 'org.akhikhl.gino:gino-runner:0.0.1' }
+    project.dependencies { compile 'org.akhikhl.gino:gino-runner:0.0.2' }
 
     project.task('run') { task ->
       task.dependsOn project.tasks.classes
