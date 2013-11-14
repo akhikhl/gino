@@ -5,16 +5,16 @@ buildscript {
     mavenCentral()
   }
 
-  apply plugin: "maven"
+  apply plugin: 'maven'
   
   dependencies {
-    classpath "org.akhikhl.gino:gino-plugin:0.0.1"
+    classpath 'org.akhikhl.gino:gino-plugin:0.0.2'
   }
 }
 
 allprojects {
-  group = "org.akhikhl.gino.examples"
-  version = "0.0.1"
+  group = 'org.akhikhl.gino.examples'
+  version = '0.0.2'
 }
 
 subprojects {
@@ -23,5 +23,5 @@ subprojects {
     mavenCentral()
   }
 
-  apply plugin: "maven"
+  apply plugin: 'maven'
 }
