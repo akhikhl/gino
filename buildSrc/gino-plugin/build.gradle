@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 dependencies {
   compile project(':gino-runner')
   compile 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.3'
-  compile "org.codehaus.groovy:groovy-all:2.1.9"
+  compile "org.codehaus.groovy:groovy-all:$groovy_version"
   compile gradleApi()
 }
 
