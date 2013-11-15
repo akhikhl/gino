@@ -12,9 +12,7 @@ class GinoAppPlugin implements Plugin<Project> {
 
     project.extensions.create('run', RunExtension)
 
-    project.jar {
-      manifest { attributes 'Main-Class': 'gino.Main' }
-    }
+    project.ext.mainClass = 'gino.Main'
 
     project.dependencies { compile 'org.akhikhl.gino:gino-runner:0.0.2' }
 
@@ -25,11 +23,11 @@ class GinoAppPlugin implements Plugin<Project> {
           new File("${project.buildDir}/classes/main").toURI().toURL(),
           new File("${project.buildDir}/resources/main").toURI().toURL()
         ]
-        urls += project.configurations['runtime'].collect { dep ->
+        urls += project.configurations.runtime.collect { dep ->
           dep.toURI().toURL()
         }
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], GinoAppPlugin.class.classLoader)
-        def runFolder = new File("${project.buildDir}/resources/runFolder")
+        def runFolder = new File(project.buildDir, 'run')
         runFolder.mkdirs()
         gino.Main.run(project.run.args as String[], classLoader, logger, runFolder.absolutePath)
       }

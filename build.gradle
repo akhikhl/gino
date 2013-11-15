@@ -1,0 +1,23 @@
+buildscript {
+  apply plugin: 'maven'
+  
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.3'
+    classpath 'org.akhikhl.gino:gino-plugin:0.0.2'
+  }
+}
+
+ext {
+  group = 'org.akhikhl.gino'
+  version = '0.0.2'
+  generateSources = true
+  generateJavadoc = true
+}
+
+apply from: file('root.gradle')
+
