@@ -8,13 +8,13 @@ buildscript {
 
   dependencies {
     classpath 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.4'
-    classpath 'org.akhikhl.gino:gino-plugin:0.0.2'
+    classpath 'org.akhikhl.gino:gino-plugin:0.0.3'
   }
 }
 
 ext {
   group = 'org.akhikhl.gino'
-  version = '0.0.2'
+  version = '0.0.3'
   generateSources = true
   generateJavadoc = true
 }
