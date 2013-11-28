@@ -8,7 +8,7 @@ jar {
   }
 }
 
-run {
-  arg 'hello'
-  arg 'world!'
+ext {
+  programArgs = [ 'hello', 'world!' ]
 }
+
