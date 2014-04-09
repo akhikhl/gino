@@ -3,11 +3,12 @@ buildscript {
   
   repositories {
     mavenLocal()
+    jcenter()
     mavenCentral()
   }
 
   dependencies {
-    classpath 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.5'
+    classpath 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.7'
     classpath 'org.akhikhl.gino:gino-plugin:0.0.3'
   }
 }

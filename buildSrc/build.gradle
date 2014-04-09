@@ -1,7 +1,7 @@
 apply plugin: 'base' // add "clean" task to the root project.
 
 ext {
-  groovy_version = '2.2.1'
+  groovy_version = '2.2.2'
 }
 
 subprojects {
@@ -9,6 +9,7 @@ subprojects {
 
   repositories {
     mavenLocal()
+    jcenter()
     mavenCentral()
   }
 

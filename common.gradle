@@ -13,13 +13,13 @@ afterEvaluate {
   group = (rootProject.ext.has('group') ? rootProject.ext.group : group)
   version = (version == 'unspecified' ? (rootProject.ext.has('version') ? rootProject.ext.version : '0.0.1') : version)
 
-  def groovy_version = rootProject.ext.has('groovy_version') ? rootProject.ext.groovy_version : '2.1.9'
+  def groovy_version = rootProject.ext.has('groovy_version') ? rootProject.ext.groovy_version : '2.2.2'
   def junit_version = rootProject.ext.has('junit_version') ? rootProject.ext.junit_version : '4.11'
   def spock_version = rootProject.ext.has('spock_version') ? rootProject.ext.spock_version : '0.7-groovy-2.0'
 
   if(plugins.findPlugin('java')) {
-    sourceCompatibility = '1.7'
-    targetCompatibility = '1.7'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
   }
 
