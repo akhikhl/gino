@@ -1,9 +1,5 @@
 apply plugin: 'base' // add "clean" task to the root project.
 
-ext {
-  groovy_version = '2.3.2'
-}
-
 subprojects {
   apply plugin: 'maven'
 
@@ -12,9 +8,6 @@ subprojects {
     jcenter()
     mavenCentral()
   }
-
-  group = 'org.akhikhl.gino'
-  version = '0.0.3'
 
   afterEvaluate {  
     build {
