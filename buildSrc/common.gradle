@@ -16,7 +16,7 @@ afterEvaluate {
     targetCompatibility = '1.7'
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
   }
-
+  
   if(plugins.findPlugin('groovy')) {
     dependencies {
       compile "org.codehaus.groovy:groovy-all:$groovy_version"
