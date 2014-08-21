@@ -1,5 +1,6 @@
 package gino;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
@@ -19,14 +20,25 @@ public class Main {
     String ginoJavascript = "main.js";
     while (resources.hasMoreElements()) {
       URL url = resources.nextElement();
-      Manifest manifest = new Manifest(url.openStream());
-      for (Object key : manifest.getMainAttributes().keySet()) {
-        String attrName = key.toString();
-        if ("Gino-Javascript".equals(attrName)) {
-          ginoJavascript = manifest.getMainAttributes().getValue(attrName);
-          break;
-        }
+      InputStream stm = null;
+      try {
+        stm = url.openStream();
+      } catch(Exception e) {
+        logger.warn("Could not open stream from URL: {}", url);
       }
+      if(stm != null)
+        try {
+          Manifest manifest = new Manifest(stm);
+          for (Object key : manifest.getMainAttributes().keySet()) {
+            String attrName = key.toString();
+            if ("Gino-Javascript".equals(attrName)) {
+              ginoJavascript = manifest.getMainAttributes().getValue(attrName);
+              break;
+            }
+          }
+        } finally {
+          stm.close();
+        }
     }
     Runner.run(ginoJavascript, args, classLoader, logger, true, homeFolder);
   }
