@@ -3,8 +3,9 @@ apply from: rootProject.file('common.gradle')
 
 dependencies {
   compile project(':gino-runner')
-  compile 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.12'
-  compile "org.codehaus.groovy:groovy-all:$groovy_version"
+  compile 'org.akhikhl.gradle-onejar:gradle-onejar:0.0.12', {
+    exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+  }
   compile gradleApi()
 }
 

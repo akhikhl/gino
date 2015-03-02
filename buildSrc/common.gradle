@@ -16,23 +16,8 @@ afterEvaluate {
     targetCompatibility = '1.7'
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
   }
-  
-  if(plugins.findPlugin('groovy')) {
-    dependencies {
-      compile "org.codehaus.groovy:groovy-all:$groovy_version"
-    }
-  }
 
   if(plugins.findPlugin('java') || plugins.findPlugin('groovy')) {
-
-    if(tasks.findByName('test')) {
-      dependencies {
-        testCompile "junit:junit:$junit_version"
-        if(!plugins.findPlugin('groovy'))
-          testCompile "org.codehaus.groovy:groovy-all:$groovy_version"
-        testCompile "org.spockframework:spock-core:$spock_version"
-      }
-    }
 
     if(project.parent.name == 'libs') {
       // lib projects should be always installed into "$HOME/.m2"

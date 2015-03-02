@@ -14,6 +14,6 @@ class GinoAppPlugin implements Plugin<Project> {
 
     project.ext.mainClass = 'gino.Main'
 
-    project.dependencies { compile 'org.akhikhl.gino:gino-runner:0.0.5' }
+    project.dependencies { compile 'org.akhikhl.gino:gino-runner:0.0.6' }
   }
 }
